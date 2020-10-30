@@ -1,0 +1,5 @@
+{
+  "name": "Rebase PR Workflow",
+  "description": "Template for installing the rebase workflow.",
+  "iconName": "git-merge.svg"
+}
