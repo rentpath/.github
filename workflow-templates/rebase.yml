@@ -1,19 +1,25 @@
+name: rebase
 on:
   issue_comment:
     types: [created]
-name: Automatic Rebase
 jobs:
   rebase:
-    name: Rebase
     if: github.event.issue.pull_request != '' && contains(github.event.comment.body, '/rebase')
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout the latest code
-        uses: actions/checkout@v2
+      - name: get app token from rossum
+        id: rossum
+        uses: getsentry/action-github-app-token@v3
         with:
-          fetch-depth: 0
+          app_id: ${{ secrets.ROSSUM_APP_ID }}
+          private_key: ${{ secrets.ROSSUM_PRIVATE_KEY }}
 
-      - name: Automatic Rebase
-        uses: cirrus-actions/rebase@1.7
+      - name: check out most recent commit
+        uses: actions/checkout@v4
+        with:
+          token: ${{ steps.rossum.outputs.token }}
+
+      - name: rebase
+        uses: cirrus-actions/rebase@1.8
         env:
-          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ steps.rossum.outputs.token }}
